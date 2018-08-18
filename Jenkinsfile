@@ -10,31 +10,31 @@ pipeline {
         }
         stage('canada-controllerHA') {
           steps {
-            build(job: 'canada-controllerHA', propagate: true, wait: true)
+            build(job: 'canada-controllerHA', propagate: true, wait: true, quietPeriod: 2)
           }
         }
       }
     }
-    stage('Test1') {
+    stage('Upgrade') {
       parallel {
         stage('Test Before Controller STOP') {
           steps {
             addInfoBadge 'Check Aviatrix Controller'
           }
         }
-        stage('force-peering-switchover') {
+        stage('transit-upgrade') {
           steps {
-            build(job: 'force-peering-switchover', propagate: true, wait: true)
+            build(job: 'transit-upgrade', propagate: true, wait: true, quietPeriod: 2)
           }
         }
         stage('wait') {
           steps {
-            sleep(unit: 'MINUTES', time: 2)
+            sleep(unit: 'MINUTES', time: 5)
           }
         }
       }
     }
-    stage('Stop Controller') {
+    stage('Stop Controller1') {
       parallel {
         stage('Test2') {
           steps {
@@ -51,6 +51,15 @@ pipeline {
             sleep(time: 8, unit: 'MINUTES')
           }
         }
+      }
+    }
+    stage('Test') {
+      parallel {
+        stage('Test2') {
+          steps {
+            build(job: 'force-peering-switchover', propagate: true, wait: true)
+          }
+        }
         stage('force-peering-switchover') {
           steps {
             build(job: 'force-peering-switchover', propagate: true, wait: true)
@@ -58,29 +67,42 @@ pipeline {
         }
         stage('wait3') {
           steps {
-            sleep(unit: 'MINUTES', time: 2)
+            sleep(unit: 'MINUTES', time: 8)
           }
         }
       }
     }
-    stage('Report') {
+    stage('Stop Controller2') {
       parallel {
-        stage('Report') {
+        stage('Delete CFT Stack') {
           steps {
-            emailext(subject: '$JOB_NAME. - Passed!', body: 'ControllerHA Test', to: 'edsel@aviatrix.com', attachLog: true)
+            addBadge(icon: 'Stop', text: 'Stop Controller 2nd time')
           }
         }
-        stage('destroy') {
+        stage('kill controller') {
           steps {
-            build(job: 'canada-controllerHA-stack-destroy', propagate: true, wait: true)
-            slackSend(message: 'Destroy CFT controllerHA stack', baseUrl: 'https://aviatrix.slack.com/services/hooks/jenkins-ci/', channel: '#sitdown', teamDomain: 'aviatrix', failOnError: true, token: 'zjC6JXcuigU1Nq0j3AoLBdci')
+            build(job: 'canada-stop-controller', propagate: true, wait: true)
+          }
+        }
+        stage('wait4') {
+          steps {
+            sleep(unit: 'MINUTES', time: 8)
           }
         }
       }
     }
-    stage('Thank You') {
-      steps {
-        addBadge(icon: 'TY', text: 'Thank you !')
+    stage('Delete Stack') {
+      parallel {
+        stage('Delete Stack') {
+          steps {
+            echo 'Delete cloudformation stack'
+          }
+        }
+        stage('transit-upgrade') {
+          steps {
+            build 'transit-upgrade'
+          }
+        }
       }
     }
   }
