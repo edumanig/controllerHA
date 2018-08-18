@@ -27,9 +27,14 @@ pipeline {
             build(job: 'force-peering-switchover', propagate: true, wait: true)
           }
         }
+        stage('wait') {
+          steps {
+            sleep(unit: 'MINUTES', time: 2)
+          }
+        }
       }
     }
-    stage('Test2') {
+    stage('Stop Controller') {
       parallel {
         stage('Test2') {
           steps {
@@ -41,14 +46,19 @@ pipeline {
             build(job: 'canada-stop-controller', propagate: true, wait: true)
           }
         }
-        stage('wait') {
+        stage('wait2') {
           steps {
-            sleep(time: 5, unit: 'MINUTES')
+            sleep(time: 8, unit: 'MINUTES')
           }
         }
         stage('force-peering-switchover') {
           steps {
             build(job: 'force-peering-switchover', propagate: true, wait: true)
+          }
+        }
+        stage('wait3') {
+          steps {
+            sleep(unit: 'MINUTES', time: 2)
           }
         }
       }
