@@ -30,8 +30,27 @@ pipeline {
       }
     }
     stage('Test2') {
-      steps {
-        addInfoBadge 'Stop Controller EC2 Instance'
+      parallel {
+        stage('Test2') {
+          steps {
+            addInfoBadge 'Stop Controller EC2 Instance'
+          }
+        }
+        stage('kill controller') {
+          steps {
+            build(job: 'canada-stop-controller', propagate: true, wait: true)
+          }
+        }
+        stage('wait') {
+          steps {
+            sleep(time: 5, unit: 'MINUTES')
+          }
+        }
+        stage('check-again') {
+          steps {
+            build(job: 'fullcheck-before-upgrade', propagate: true, wait: true)
+          }
+        }
       }
     }
     stage('Report') {
