@@ -114,12 +114,12 @@ pipeline {
       parallel {
         stage('Report') {
           steps {
-            slackSend(failOnError: true, message: 'ControllerHA Regression Passed!', baseUrl: 'https://aviatrix.slack.com/services/hooks/jenkins-ci/', channel: '#sitdown', teamDomain: 'aviatrix', token: 'zjC6JXcuigU1Nq0j3AoLBdci')
+            slackSend(failOnError: true, message: 'ControllerHA Regression Results - 100% Passed', baseUrl: 'https://aviatrix.slack.com/services/hooks/jenkins-ci/', channel: '#sitdown', teamDomain: 'aviatrix', token: 'zjC6JXcuigU1Nq0j3AoLBdci')
           }
         }
         stage('send email') {
           steps {
-            mail(subject: 'ControllerHA Regression Results', to: 'edsel@aviatrix.com', body: 'create CFT stack, transit-upgrade, stop controller, wait, force-peering-switchover, stop controller, transit-upgrade, slack notification, send email')
+            mail(subject: 'ControllerHA Regression Results - 100% Passed', to: 'edsel@aviatrix.com', body: 'create CFT stack, transit-upgrade, stop controller, wait, force-peering-switchover, stop controller, transit-upgrade, slack notification, send email')
           }
         }
       }
