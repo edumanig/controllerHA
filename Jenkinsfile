@@ -36,7 +36,7 @@ pipeline {
     }
     stage('Stop Controller1') {
       parallel {
-        stage('Test2') {
+        stage('Trigger Controller HA') {
           steps {
             addInfoBadge 'Stop Controller EC2 Instance'
           }
@@ -74,7 +74,7 @@ pipeline {
     }
     stage('Stop Controller2') {
       parallel {
-        stage('Delete CFT Stack') {
+        stage('Trigger Controller HA') {
           steps {
             addBadge(icon: 'Stop', text: 'Stop Controller 2nd time')
           }
@@ -101,6 +101,11 @@ pipeline {
         stage('transit-upgrade') {
           steps {
             build 'transit-upgrade'
+          }
+        }
+        stage('destroy stack') {
+          steps {
+            build(job: 'canada-controllerHA-stack-destroy', propagate: true, wait: true)
           }
         }
       }
