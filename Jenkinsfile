@@ -6,7 +6,7 @@ pipeline {
         stage('CFT Stack') {
           steps {
             addInfoBadge 'Create CloudFormation Stack'
-            slackSend(message: 'Create CFT controllerHA stack', baseUrl: ' https://aviatrix.slack.com/services/hooks/jenkins-ci/', channel: '#sitdown', failOnError: true, teamDomain: 'aviatrix', token: 'zjC6JXcuigU1Nq0j3AoLBdc')
+            slackSend(message: 'Create CFT controllerHA stack', baseUrl: 'https://aviatrix.slack.com/services/hooks/jenkins-ci/', channel: '#sitdown', failOnError: true, teamDomain: 'aviatrix', token: 'zjC6JXcuigU1Nq0j3AoLBdc')
           }
         }
         stage('canada-controllerHA') {
