@@ -22,9 +22,9 @@ pipeline {
             addInfoBadge 'Check Aviatrix Controller'
           }
         }
-        stage('fullcheck-before-upgrade') {
+        stage('force-peering-switchover') {
           steps {
-            build(job: 'fullcheck-before-upgrade', propagate: true, wait: true)
+            build(job: 'force-peering-switchover', propagate: true, wait: true)
           }
         }
       }
@@ -46,9 +46,9 @@ pipeline {
             sleep(time: 5, unit: 'MINUTES')
           }
         }
-        stage('check-again') {
+        stage('force-peering-switchover') {
           steps {
-            build(job: 'fullcheck-before-upgrade', propagate: true, wait: true)
+            build(job: 'force-peering-switchover', propagate: true, wait: true)
           }
         }
       }
