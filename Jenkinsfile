@@ -53,9 +53,9 @@ pipeline {
         }
       }
     }
-    stage('Test') {
+    stage('Test1') {
       parallel {
-        stage('Test2') {
+        stage('Test1') {
           steps {
             build(job: 'force-peering-switchover', propagate: true, wait: true)
           }
@@ -91,6 +91,25 @@ pipeline {
         }
       }
     }
+    stage('Test2') {
+      parallel {
+        stage('Test2') {
+          steps {
+            echo 'Upgrade 2nd time'
+          }
+        }
+        stage('transit-upgrade') {
+          steps {
+            build(job: 'transit-upgrade', propagate: true, wait: true, quietPeriod: 10)
+          }
+        }
+        stage('wait5') {
+          steps {
+            sleep(unit: 'MINUTES', time: 5)
+          }
+        }
+      }
+    }
     stage('Delete Stack') {
       parallel {
         stage('Delete Stack') {
@@ -98,14 +117,14 @@ pipeline {
             echo 'Delete cloudformation stack'
           }
         }
-        stage('transit-upgrade') {
-          steps {
-            build 'transit-upgrade'
-          }
-        }
         stage('destroy stack') {
           steps {
-            build(job: 'canada-controllerHA-stack-destroy', propagate: true, wait: true)
+            build(job: 'canada-controllerHA-stack-destroy', propagate: true, wait: true, quietPeriod: 30)
+          }
+        }
+        stage('wait6') {
+          steps {
+            sleep 10
           }
         }
       }
@@ -114,12 +133,12 @@ pipeline {
       parallel {
         stage('Report') {
           steps {
-            slackSend(failOnError: true, message: 'ControllerHA Regression Results - 100% Passed', baseUrl: 'https://aviatrix.slack.com/services/hooks/jenkins-ci/', channel: '#sitdown', teamDomain: 'aviatrix', token: 'zjC6JXcuigU1Nq0j3AoLBdci')
+            slackSend(message: 'ControllerHA Regression - 100% Passed', baseUrl: 'https://aviatrix.slack.com/services/hooks/jenkins-ci/', channel: '#sitdown', failOnError: true, teamDomain: 'aviatrix', token: 'zjC6JXcuigU1Nq0j3AoLBdci')
           }
         }
-        stage('send email') {
+        stage('Send Email') {
           steps {
-            mail(subject: 'ControllerHA Regression Results - 100% Passed', to: 'edsel@aviatrix.com', body: 'create CFT stack, transit-upgrade, stop controller, wait, force-peering-switchover, stop controller, transit-upgrade, slack notification, send email')
+            emailext(attachLog: true, subject: 'ControllerHA Regression Results - 100% Passed', to: 'edsel@aviatrix.com,arvind@aviatrix.com', body: 'create CFT stack, transit-upgrade, stop controller, wait, force-peering-switchover, stop controller, transit-upgrade, slack notification, send email', from: 'noreply@aviatrix.com')
           }
         }
       }
