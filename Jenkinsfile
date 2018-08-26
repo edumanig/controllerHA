@@ -133,7 +133,7 @@ pipeline {
       parallel {
         stage('Report') {
           steps {
-            slackSend(message: 'ControllerHA Regression - 100% Passed', baseUrl: 'https://aviatrix.slack.com/services/hooks/jenkins-ci/', channel: '#sitdown', failOnError: true, teamDomain: 'aviatrix', token: 'zjC6JXcuigU1Nq0j3AoLBdci')
+            slackSend(message: 'ControllerHA Regression Connect-3.4.703- 100% Passed', baseUrl: 'https://aviatrix.slack.com/services/hooks/jenkins-ci/', channel: '#sitdown', failOnError: true, teamDomain: 'aviatrix', token: 'zjC6JXcuigU1Nq0j3AoLBdci')
           }
         }
         stage('Send Email') {
