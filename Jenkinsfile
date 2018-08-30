@@ -133,12 +133,12 @@ pipeline {
       parallel {
         stage('Report') {
           steps {
-            slackSend(message: 'ControllerHA Regression Connect-3.4.703- 100% Passed', baseUrl: 'https://aviatrix.slack.com/services/hooks/jenkins-ci/', channel: '#sitdown', failOnError: true, teamDomain: 'aviatrix', token: 'zjC6JXcuigU1Nq0j3AoLBdci')
+            slackSend(message: 'ControllerHA Regression Connect-3.4.703- 100% Passed', baseUrl: 'https://aviatrix.slack.com/services/hooks/jenkins-ci/', channel: '#sitdown', failOnError: true, teamDomain: 'aviatrix', token: 'zjC6JXcuigU1Nq0j3AoLBdci', attachments: 'create CFT stack, transit-upgrade, stop controller, wait, check IAM-ROLE, check ec2 volume size, check T2 unlimited, force-peering-switchover, stop controller, transit-upgrade, AND run kill controller twice, slack notification, send email')
           }
         }
         stage('Send Email') {
           steps {
-            emailext(attachLog: true, subject: 'ControllerHA Regression Results - 100% Passed', to: 'dltest@aviatrix.com,arvind@aviatrix.com', body: 'create CFT stack, transit-upgrade, stop controller, wait, force-peering-switchover, stop controller, transit-upgrade, slack notification, send email', from: 'noreply@aviatrix.com')
+            emailext(attachLog: true, subject: 'ControllerHA Regression Results - 100% Passed', to: 'dltest@aviatrix.com,arvind@aviatrix.com', body: 'create CFT stack, transit-upgrade, stop controller, wait, check IAM-ROLE, check ec2 volume size, check T2 unlimited, force-peering-switchover, stop controller, transit-upgrade, AND run kill controller twice, slack notification, send email', from: 'noreply@aviatrix.com')
           }
         }
       }
