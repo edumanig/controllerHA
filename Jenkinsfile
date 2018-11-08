@@ -133,7 +133,7 @@ pipeline {
       parallel {
         stage('Report') {
           steps {
-            slackSend(message: 'ControllerHA Regression Connect-3.4.703- 100% Passed', baseUrl: 'https://aviatrix.slack.com/services/hooks/jenkins-ci/', channel: '#sitdown', failOnError: true, teamDomain: 'aviatrix', token: 'zjC6JXcuigU1Nq0j3AoLBdci', attachments: 'create CFT stack, transit-upgrade, stop controller, wait, check IAM-ROLE, check ec2 volume size, check T2 unlimited, force-peering-switchover, stop controller, transit-upgrade, AND run kill controller twice, slack notification, send email')
+            slackSend(message: 'ControllerHA Regression Connect-3.4.703- 100% Passed', baseUrl: 'https://aviatrix.slack.com/services/hooks/jenkins-ci/', channel: '#test-controllerha', failOnError: true, teamDomain: 'aviatrix', token: 'zjC6JXcuigU1Nq0j3AoLBdci', attachments: 'create CFT stack, transit-upgrade, stop controller, wait, check IAM-ROLE, check ec2 volume size, check T2 unlimited, force-peering-switchover, stop controller, transit-upgrade, AND run kill controller twice, slack notification, send email')
           }
         }
         stage('Send Email') {
