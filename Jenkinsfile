@@ -13,6 +13,11 @@ pipeline {
             build(job: 'canada-controllerHA', propagate: true, wait: true, quietPeriod: 2)
           }
         }
+        stage('transit-bgp-switchover') {
+          steps {
+            build(job: 'transit-bgp-switchover', propagate: true, quietPeriod: 10, wait: true)
+          }
+        }
       }
     }
     stage('Upgrade') {
@@ -22,9 +27,9 @@ pipeline {
             addInfoBadge 'Check Aviatrix Controller'
           }
         }
-        stage('transit-upgrade') {
+        stage('transit-check-primary-datapath') {
           steps {
-            build(job: 'transit-upgrade', propagate: true, wait: true, quietPeriod: 2)
+            build(job: 'transit-check-primary-datapath', propagate: true, wait: true, quietPeriod: 2)
           }
         }
         stage('wait') {
@@ -60,9 +65,9 @@ pipeline {
             build(job: 'force-peering-switchover', propagate: true, wait: true)
           }
         }
-        stage('force-peering-switchover') {
+        stage('transit-check-primary-datapath') {
           steps {
-            build(job: 'force-peering-switchover', propagate: true, wait: true)
+            build(job: 'transit-check-primary-datapath', propagate: true, wait: true, quietPeriod: 10)
           }
         }
         stage('wait3') {
@@ -98,9 +103,9 @@ pipeline {
             echo 'Upgrade 2nd time'
           }
         }
-        stage('transit-upgrade') {
+        stage('transit-check-primary-datapath') {
           steps {
-            build(job: 'transit-upgrade', propagate: true, wait: true, quietPeriod: 10)
+            build(job: 'transit-check-primary-datapath', propagate: true, wait: true, quietPeriod: 10)
           }
         }
         stage('wait5') {
@@ -138,7 +143,7 @@ pipeline {
         }
         stage('Send Email') {
           steps {
-            emailext(attachLog: true, subject: 'ControllerHA Regression Results - 100% Passed', to: 'dltest@aviatrix.com,arvind@aviatrix.com', body: 'create CFT stack, transit-upgrade, stop controller, wait, check IAM-ROLE, check ec2 volume size, check T2 unlimited, force-peering-switchover, stop controller, transit-upgrade, AND run kill controller twice, slack notification, send email', from: 'noreply@aviatrix.com')
+            emailext(attachLog: true, subject: 'ControllerHA Regression Results - 100% Passed', to: 'dltest@aviatrix.com,arvind@aviatrix.com', body: 'create CFT stack, transit-check-primary-datapath, stop controller, wait, transit-check-primary-datapath, check ec2 volume size, check T2 unlimited, transit-check-primary-datapath, stop controller, transit-check-primary-datapath, AND run kill controller twice, send email', from: 'noreply@aviatrix.com')
           }
         }
       }
